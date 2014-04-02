@@ -1,0 +1,25 @@
+{
+  "name": "splitlessify",
+  "version": "0.1.0",
+  "description": "Browserify plugin to split .less dependencies into their own file during bundling",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "dependencies": {
+    "through": "*"
+  },
+  "devDependencies": {
+    "rimraf": "*",
+    "mocha": "*",
+    "should": "*",
+    "browserify": "~3.38.0",
+    "less": "~1.7.0"
+  },
+  "peerDependencies": {
+    "browserify": "~3.38.0",
+    "less": "~1.7.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
