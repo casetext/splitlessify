@@ -7,11 +7,11 @@ var transformLess = function(file) {
   if (path.extname(file) == '.less' || path.extname(file) == '.css') {
     var pipe = through(function(buf) {
     }, function() {
-      this.queue("// splitlessify: '" + path.basename(file) + "'");
-      this.queue("return null;")
+      this.queue('// splitlessify: "' + path.basename(file) + '"');
+      this.queue('return null;')
       this.queue(null);
     });
-    pipe._name = "transformLess";
+    pipe._name = 'transformLess';
     return pipe;
   } else {
     return through();
@@ -28,14 +28,14 @@ module.exports = function(b, options) {
   b.transform(transformLess);
 
   b.on('bundle', function(bundle) {
-    var lessData = "";
+    var lessData = '';
 
     bundle.on('transform', function(tr, file) {
       if (tr._name && tr._name == 'transformLess') {
         if (path.extname(file) == '.css') {
-          lessData += "@import (inline) '" + file + "';\n";
+          lessData += '@import (inline) "' + file + '";\n';
         } else {
-          lessData += "@import '" + file + "';\n";
+          lessData += '@import "' + file + '";\n';
         }
       }
     });

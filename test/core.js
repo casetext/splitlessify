@@ -17,7 +17,7 @@ describe('splitlessify', function() {
     }
   });
   after(function() {
-    // rmdir('./test/tmp', function(){});
+    rmdir('./test/tmp', function(){});
   });
   beforeEach(function() {
     b = browserify();
@@ -32,15 +32,16 @@ describe('splitlessify', function() {
     b.bundle().on('data', function(chunk) {
       data += chunk;
     }).on('end', function() {
-      fs.existsSync('./test/tmp/out.css').should.be.true;
+      setTimeout(function() {
+        fs.existsSync('./test/tmp/out.css').should.be.true;
 
-      // check the generated file and make sure it looks the way it's supposed to
-      var css = fs.readFileSync('./test/tmp/out.css', { encoding: 'utf-8' });
-      css.should.match(/\.foo {/);
-      css.should.match(/color: black/);
-      css.should.match(/\.bar {/);
-      css.should.match(/color: green/);
-
+        // check the generated file and make sure it looks the way it's supposed to
+        var css = fs.readFileSync('./test/tmp/out.css', { encoding: 'utf-8' });
+        css.should.match(/\.foo {/);
+        css.should.match(/color: black/);
+        css.should.match(/\.bar {/);
+        css.should.match(/color: green/);
+      }, 250);
       done();
     });
   });
@@ -54,14 +55,15 @@ describe('splitlessify', function() {
     b.bundle().on('data', function(chunk) {
       data += chunk;
     }).on('end', function() {
-      fs.existsSync('./test/tmp/out_less.css').should.be.true;
+      setTimeout(function() {
+        fs.existsSync('./test/tmp/out_less.css').should.be.true;
 
-      // check the generated file and make sure it looks the way it's supposed to
-      var css = fs.readFileSync('./test/tmp/out_less.css', { encoding: 'utf-8' });
-      css.should.match(/\.quux {/);
-      css.should.match(/\.greenthing {/);
-      css.should.match(/color: green/);
-
+        // check the generated file and make sure it looks the way it's supposed to
+        var css = fs.readFileSync('./test/tmp/out_less.css', { encoding: 'utf-8' });
+        css.should.match(/\.quux {/);
+        css.should.match(/\.greenthing {/);
+        css.should.match(/color: green/);
+      }, 250);
       done();
     });
   });
@@ -80,15 +82,17 @@ describe('splitlessify', function() {
       b.bundle().on('data', function(chunk) {
         data += chunk;
       }).on('end', function() {
-        fs.existsSync('./test/tmp/out_custom.css').should.be.true;
+        setTimeout(function() {
+          fs.existsSync('./test/tmp/out_custom.css').should.be.true;
 
-        // check the generated file and make sure it looks the way it's supposed to
-        var css = fs.readFileSync('./test/tmp/out_custom.css', { encoding: 'utf-8' });
+          // check the generated file and make sure it looks the way it's supposed to
+          var css = fs.readFileSync('./test/tmp/out_custom.css', { encoding: 'utf-8' });
 
-        css.should.match(/\.foo {/);
-        css.should.match(/\.thingy {/);
+          css.should.match(/\.foo {/);
+          css.should.match(/\.thingy {/);
 
-        done();
+          done();
+        }, 250);
       });
     });
 
@@ -104,12 +108,14 @@ describe('splitlessify', function() {
       b.bundle().on('data', function(chunk) {
         data += chunk;
       }).on('end', function() {
-        fs.existsSync('./test/tmp/out_compress.css').should.be.true;
+        setTimeout(function() {
+          fs.existsSync('./test/tmp/out_compress.css').should.be.true;
 
-        // check the generated file and make sure it looks the way it's supposed to
-        var css = fs.readFileSync('./test/tmp/out_compress.css', { encoding: 'utf-8' });
-        css.should.match(/\.greenthing{color:green}\.foo{color:green}/m);
-        done();
+          // check the generated file and make sure it looks the way it's supposed to
+          var css = fs.readFileSync('./test/tmp/out_compress.css', { encoding: 'utf-8' });
+          css.should.match(/\.greenthing{color:green}\.foo{color:green}/m);
+          done();
+        }, 250);
       });
     });
   });
