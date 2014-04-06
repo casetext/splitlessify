@@ -24,13 +24,13 @@ b.plugin('splitlessify', options);
 ### options
 
 #### filename
-type ```[string]```: where to output the CSS file that will satisfy all the bundle's LESS dependencies.
+ - type [string] where to output the CSS file that will satisfy all the bundle's CSS dependencies.
 
 #### parser
-type ```[object]```: options to pass to ```new less.Parser``` (you can set ```paths``` here, for instance)
+ - type [object] options to pass to ```new less.Parser```
 
 #### toCSS
-type [object]: options to pass to ```tree.toCSS``` (you can set ```compress: true``` here, for instance)
+ - type [object] options to pass to ```tree.toCSS``` (you can set ```compress: true``` here, for instance)
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code.
