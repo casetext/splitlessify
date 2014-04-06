@@ -1,32 +1,35 @@
-var fs = require('fs');
-var path = require('path');
-var less = require('less');
-var through = require('through');
-
-var transformLess = function(file) {
-  if (path.extname(file) == '.less' || path.extname(file) == '.css') {
-    var pipe = through(function(buf) {
-    }, function() {
-      this.queue('// splitlessify: "' + path.basename(file) + '"');
-      this.queue('return null;')
-      this.queue(null);
-    });
-    pipe._name = 'transformLess';
-    return pipe;
-  } else {
-    return through();
-  }
-};
+var fs = require('fs')
+  , path = require('path')
+  , less = require('less')
+  , through = require('through');
 
 module.exports = function(b, options) {
   if (!options) {
     options = {};
   }
-  var lessParserOptions = options.parser ? options.parser : {};
-  var toCSSOptions = options.toCSS ? options.toCSS : {};
-  // b is the browserify api object
+
+  var lessParserOptions = options.parser ? options.parser : {}
+    , toCSSOptions = options.toCSS ? options.toCSS : {}
+    , lessParser = new(less.Parser)(lessParserOptions);
+
+
+  var transformLess = function(file) {
+    if (path.extname(file) == '.less' || path.extname(file) == '.css') {
+      var pipe = through(function() {}, function() {
+        this.queue('// splitlessify: "' + path.basename(file) + '"');
+        this.queue(null);
+      });
+      pipe._name = 'transformLess';
+      return pipe;
+    } else {
+      return through();
+    }
+  };
+
+  // register the transform
   b.transform(transformLess);
 
+  // here's where the fun starts. handle bundle events
   b.on('bundle', function(bundle) {
     var lessData = '';
 
@@ -41,9 +44,7 @@ module.exports = function(b, options) {
     });
 
     bundle.on('end', function() {
-      // generate css from less
-      if (lessData != "") {
-        var lessParser = new(less.Parser)(lessParserOptions);
+      if (lessData !== '') {
         lessParser.parse(lessData, function (err, tree) {
           if (err) {
             throw err;

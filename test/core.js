@@ -28,12 +28,10 @@ describe('splitlessify', function() {
       filename: './test/tmp/out.css'
     });
     b.add('./test/shims/css/testcss.js');
-    var data = '';
-    b.bundle().on('data', function(chunk) {
-      data += chunk;
+    b.bundle().on('data', function() {
     }).on('end', function() {
       setTimeout(function() {
-        fs.existsSync('./test/tmp/out.css').should.be.true;
+        fs.existsSync('./test/tmp/out.css').should.eql(true);
 
         // check the generated file and make sure it looks the way it's supposed to
         var css = fs.readFileSync('./test/tmp/out.css', { encoding: 'utf-8' });
@@ -41,8 +39,8 @@ describe('splitlessify', function() {
         css.should.match(/color: black/);
         css.should.match(/\.bar {/);
         css.should.match(/color: green/);
+        done();
       }, 250);
-      done();
     });
   });
 
@@ -51,20 +49,18 @@ describe('splitlessify', function() {
       filename: './test/tmp/out_less.css'
     });
     b.add('./test/shims/less/test.js');
-    var data = '';
-    b.bundle().on('data', function(chunk) {
-      data += chunk;
+    b.bundle().on('data', function() {
     }).on('end', function() {
       setTimeout(function() {
-        fs.existsSync('./test/tmp/out_less.css').should.be.true;
+        fs.existsSync('./test/tmp/out_less.css').should.eql(true);
 
         // check the generated file and make sure it looks the way it's supposed to
         var css = fs.readFileSync('./test/tmp/out_less.css', { encoding: 'utf-8' });
         css.should.match(/\.quux {/);
         css.should.match(/\.greenthing {/);
         css.should.match(/color: green/);
+        done();
       }, 250);
-      done();
     });
   });
 
@@ -78,12 +74,10 @@ describe('splitlessify', function() {
         }
       });
       b.add('./test/shims/less/test_custom.js');
-      var data = '';
-      b.bundle().on('data', function(chunk) {
-        data += chunk;
+      b.bundle().on('data', function() {
       }).on('end', function() {
         setTimeout(function() {
-          fs.existsSync('./test/tmp/out_custom.css').should.be.true;
+          fs.existsSync('./test/tmp/out_custom.css').should.eql(true);
 
           // check the generated file and make sure it looks the way it's supposed to
           var css = fs.readFileSync('./test/tmp/out_custom.css', { encoding: 'utf-8' });
@@ -104,16 +98,15 @@ describe('splitlessify', function() {
         }
       });
       b.add('./test/shims/less/test.js');
-      var data = '';
-      b.bundle().on('data', function(chunk) {
-        data += chunk;
+      b.bundle().on('data', function() {
       }).on('end', function() {
         setTimeout(function() {
-          fs.existsSync('./test/tmp/out_compress.css').should.be.true;
+          fs.existsSync('./test/tmp/out_compress.css').should.eql(true);
 
           // check the generated file and make sure it looks the way it's supposed to
           var css = fs.readFileSync('./test/tmp/out_compress.css', { encoding: 'utf-8' });
           css.should.match(/\.greenthing{color:green}\.foo{color:green}/m);
+
           done();
         }, 250);
       });
