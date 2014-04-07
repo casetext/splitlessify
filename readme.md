@@ -51,6 +51,12 @@ Add tests for any new functionality.
 
 ## Release History
 
+### v0.2.2
+  - Use process.nextTick to call callbacks so they're properly asynchronous
+
+### v0.2.1
+  - Added browserify-plugin tag to package.json
+
 ### v0.2.0
   - Added callback and errback options
 
