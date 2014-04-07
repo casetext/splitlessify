@@ -111,5 +111,32 @@ describe('splitlessify', function() {
         }, 250);
       });
     });
+
+    it('accepts a callback parameter', function(done) {
+      b.plugin(splitlessify, {
+        filename: './test/tmp/out_callback.css',
+        callback: function() {
+          done();
+        }
+      });
+      b.add('./test/shims/less/test.js');
+      b.bundle().on('data', function() {});
+    });
+
+    it('accepts an errback parameter', function(done) {
+      var doneYet = false;
+      b.plugin(splitlessify, {
+        filename: './test/tmp/out_errback.css',
+        errback: function(e) {
+          if (!doneYet) {
+            done();
+            doneYet = true;
+          }
+        }
+      });
+      b.add('./test/shims/less/testerror.js');
+      b.bundle().on('data', function() {});
+    });
+
   });
 });

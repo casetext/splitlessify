@@ -45,11 +45,28 @@ module.exports = function(b, options) {
 
     bundle.on('end', function() {
       if (lessData !== '') {
-        lessParser.parse(lessData, function (err, tree) {
+          lessParser.parse(lessData, function (err, tree) {
           if (err) {
-            throw err;
+            if (options.errback) {
+              options.errback(err);
+            } else {
+              throw err;
+            }
+          } else {
+            try {
+              var css = tree.toCSS(toCSSOptions);
+              fs.writeFileSync(options.filename, css);
+              if (options.callback) {
+                options.callback();
+              }
+            } catch(e) {
+              if (options.errback) {
+                options.errback(e);
+              } else {
+                throw(e);
+              }
+            }
           }
-          fs.writeFileSync(options.filename, tree.toCSS(toCSSOptions));
         });
       }
     });
