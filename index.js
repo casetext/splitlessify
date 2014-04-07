@@ -45,7 +45,7 @@ module.exports = function(b, options) {
 
     bundle.on('end', function() {
       if (lessData !== '') {
-          lessParser.parse(lessData, function (err, tree) {
+        lessParser.parse(lessData, function (err, tree) {
           if (err) {
             if (options.errback) {
               options.errback(err);
