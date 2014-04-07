@@ -57,11 +57,13 @@ module.exports = function(b, options) {
               var css = tree.toCSS(toCSSOptions);
               fs.writeFileSync(options.filename, css);
               if (options.callback) {
-                options.callback();
+                process.nextTick(options.callback);
               }
             } catch(e) {
               if (options.errback) {
-                options.errback(e);
+                process.nextTick(function() {
+                  options.errback(e);
+                });
               } else {
                 throw(e);
               }
