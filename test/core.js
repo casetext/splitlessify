@@ -30,7 +30,7 @@ describe('splitlessify', function() {
     b.add('./test/shims/css/testcss.js');
     b.bundle().on('data', function() {
     }).on('end', function() {
-      setTimeout(function() {
+      process.nextTick(function() {
         fs.existsSync('./test/tmp/out.css').should.eql(true);
 
         // check the generated file and make sure it looks the way it's supposed to
@@ -40,7 +40,7 @@ describe('splitlessify', function() {
         css.should.match(/\.bar {/);
         css.should.match(/color: green/);
         done();
-      }, 250);
+      });
     });
   });
 
@@ -51,7 +51,7 @@ describe('splitlessify', function() {
     b.add('./test/shims/less/test.js');
     b.bundle().on('data', function() {
     }).on('end', function() {
-      setTimeout(function() {
+      process.nextTick(function() {
         fs.existsSync('./test/tmp/out_less.css').should.eql(true);
 
         // check the generated file and make sure it looks the way it's supposed to
@@ -60,7 +60,7 @@ describe('splitlessify', function() {
         css.should.match(/\.greenthing {/);
         css.should.match(/color: green/);
         done();
-      }, 250);
+      });
     });
   });
 
@@ -76,7 +76,7 @@ describe('splitlessify', function() {
       b.add('./test/shims/less/test_custom.js');
       b.bundle().on('data', function() {
       }).on('end', function() {
-        setTimeout(function() {
+        process.nextTick(function() {
           fs.existsSync('./test/tmp/out_custom.css').should.eql(true);
 
           // check the generated file and make sure it looks the way it's supposed to
@@ -86,7 +86,7 @@ describe('splitlessify', function() {
           css.should.match(/\.thingy {/);
 
           done();
-        }, 250);
+        });
       });
     });
 
@@ -100,7 +100,7 @@ describe('splitlessify', function() {
       b.add('./test/shims/less/test.js');
       b.bundle().on('data', function() {
       }).on('end', function() {
-        setTimeout(function() {
+        process.nextTick(function() {
           fs.existsSync('./test/tmp/out_compress.css').should.eql(true);
 
           // check the generated file and make sure it looks the way it's supposed to
@@ -108,7 +108,7 @@ describe('splitlessify', function() {
           css.should.match(/\.greenthing{color:green}\.foo{color:green}/m);
 
           done();
-        }, 250);
+        });
       });
     });
 
