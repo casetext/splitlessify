@@ -21,10 +21,16 @@ var b = require('browserify')
 b.plugin('splitlessify', options);
 ```
 
+### events
+  - 'splitlessify:end' - triggered on the browserify object when the CSS is finished writing.
+
 ### options
 
+#### stream
+ - type [readable.Stream] a stream to which the output CSS will be written
+
 #### filename
- - type [string] where to output the CSS file that will satisfy all the bundle's CSS dependencies.
+ - type [string] path to a file where splitlessify will write the output CSS
 
 #### parser
  - type [object] options to pass to ```new less.Parser```
@@ -50,6 +56,9 @@ npm test
 Add tests for any new functionality.
 
 ## Release History
+
+### v0.3.0
+  - options.stream and browserify 'splitlessify:end' event added
 
 ### v0.2.2
   - Use process.nextTick to call callbacks so they're properly asynchronous

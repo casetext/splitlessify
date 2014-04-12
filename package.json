@@ -1,6 +1,6 @@
 {
   "name": "splitlessify",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Browserify plugin to split .less dependencies into their own file during bundling",
   "keywords": ["browserify", "less", "split", "build", "css", "browserify-plugin"],
   "homepage": "https://github.com/casetext/splitlessify",
