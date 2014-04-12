@@ -12,7 +12,6 @@ module.exports = function(b, options) {
     , toCSSOptions = options.toCSS ? options.toCSS : {}
     , lessParser = new(less.Parser)(lessParserOptions);
 
-
   var transformLess = function(file) {
     if (path.extname(file) == '.less' || path.extname(file) == '.css') {
       var pipe = through(function() {}, function() {
@@ -32,6 +31,15 @@ module.exports = function(b, options) {
   // here's where the fun starts. handle bundle events
   b.on('bundle', function(bundle) {
     var lessData = '';
+    if (!options.stream) {
+      if (!options.filename) {
+        throw new Error('Must specify either a filename or stream to send CSS to');
+      }
+      options.stream = fs.createWriteStream(options.filename);
+    }
+    options.stream.on('finish', function() {
+      b.emit('splitlessify:end', options.stream);
+    });
 
     bundle.on('transform', function(tr, file) {
       if (tr._name && tr._name == 'transformLess') {
@@ -55,8 +63,8 @@ module.exports = function(b, options) {
           } else {
             try {
               var css = tree.toCSS(toCSSOptions);
-              fs.writeFileSync(options.filename, css);
-              if (options.callback) {
+              options.stream.end(css);
+             if (options.callback) {
                 process.nextTick(options.callback);
               }
             } catch(e) {
