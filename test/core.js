@@ -27,7 +27,7 @@ describe('splitlessify', function() {
     b.plugin(splitlessify, {
       filename: './test/tmp/out_less.css'
     });
-    b.on('splitlessify:end', function() {
+    b.on('splitlessify:end', function(emit) {
       fs.existsSync('./test/tmp/out_less.css').should.eql(true);
 
       // check the generated file and make sure it looks the way it's supposed to
@@ -50,7 +50,7 @@ describe('splitlessify', function() {
           relativeUrls: false
         }
       });
-      b.on('splitlessify:end', function() {
+      b.on('splitlessify:end', function(filenames) {
         fs.existsSync('./test/tmp/out_custom.css').should.eql(true);
 
         // check the generated file and make sure it looks the way it's supposed to
@@ -90,7 +90,7 @@ describe('splitlessify', function() {
     it('accepts a callback parameter', function(done) {
       b.plugin(splitlessify, {
         filename: './test/tmp/out_callback.css',
-        callback: function() {
+        callback: function(files) {
           done();
         }
       });
@@ -113,5 +113,14 @@ describe('splitlessify', function() {
       b.bundle().pipe(fs.createWriteStream('/dev/null'));
     });
 
+    it('can watch changes to LESS files in the dependency graph and regenerate', function(done) {
+      b.plugin(splitlessify, {
+        filename: './test/tmp/out_watch.css',
+        watch: true
+      });
+      b.add('./test/shims/less/test.js');
+      b.bundle().pipe(fs.createWriteStream('/dev/null'));
+      done();
+    });
   });
 });
