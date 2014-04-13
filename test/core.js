@@ -23,26 +23,6 @@ describe('splitlessify', function() {
     b = browserify();
   });
 
-  it('generates a single separate file for require()d CSS files', function(done) {
-    b.plugin(splitlessify, {
-      filename: './test/tmp/out.css'
-    });
-    b.on('splitlessify:end', function(sl) {
-      fs.existsSync('./test/tmp/out.css').should.eql(true);
-
-      // check the generated file and make sure it looks the way it's supposed to
-      var css = fs.readFileSync('./test/tmp/out.css', { encoding: 'utf-8' });
-      css.should.match(/\.foo {/);
-      css.should.match(/color: black/);
-      css.should.match(/\.bar {/);
-      css.should.match(/color: green/);
-      done();
-    });
-
-    b.add('./test/shims/css/testcss.js');
-    b.bundle().pipe(fs.createWriteStream('/dev/null'));
-  });
-
   it('processes LESS files into CSS transparently', function(done) {
     b.plugin(splitlessify, {
       filename: './test/tmp/out_less.css'
@@ -52,7 +32,6 @@ describe('splitlessify', function() {
 
       // check the generated file and make sure it looks the way it's supposed to
       var css = fs.readFileSync('./test/tmp/out_less.css', { encoding: 'utf-8' });
-      css.should.match(/\.quux {/);
       css.should.match(/\.greenthing {/);
       css.should.match(/color: green/);
       done();

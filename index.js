@@ -13,7 +13,7 @@ module.exports = function(b, options) {
     , lessParser = new(less.Parser)(lessParserOptions);
 
   var transformLess = function(file) {
-    if (path.extname(file) == '.less' || path.extname(file) == '.css') {
+    if (path.extname(file) == '.less') {
       var pipe = through(function() {}, function() {
         this.queue('// splitlessify: "' + path.basename(file) + '"');
         this.queue(null);
@@ -43,11 +43,7 @@ module.exports = function(b, options) {
 
     bundle.on('transform', function(tr, file) {
       if (tr._name && tr._name == 'transformLess') {
-        if (path.extname(file) == '.css') {
-          lessData += '@import (inline) "' + file + '";\n';
-        } else {
-          lessData += '@import "' + file + '";\n';
-        }
+        lessData += '@import "' + file + '";\n';
       }
     });
 
