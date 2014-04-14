@@ -26,14 +26,14 @@
     "through": "~2.3.4"
   },
   "devDependencies": {
-    "chokidar": "*",
+    "chokidar": "~0.8.2",
     "rimraf": "~2.2.6",
     "mocha": "~1.18.2",
     "should": "~3.2.0",
     "browserify": "~3.38.0",
     "less": "~1.7.0",
-    "touch": "0.0.3",
-    "ncp": "^0.5.0"
+    "touch": "~0.0.3",
+    "ncp": "~0.5.0"
   },
   "peerDependencies": {
     "browserify": "~3.38.0",
