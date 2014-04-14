@@ -2,7 +2,14 @@
   "name": "splitlessify",
   "version": "0.3.0",
   "description": "Browserify plugin to split .less dependencies into their own file during bundling",
-  "keywords": ["browserify", "less", "split", "build", "css", "browserify-plugin"],
+  "keywords": [
+    "browserify",
+    "less",
+    "split",
+    "build",
+    "css",
+    "browserify-plugin"
+  ],
   "homepage": "https://github.com/casetext/splitlessify",
   "bugs": {
     "url": "https://github.com/casetext/splitlessify/issues"
@@ -24,7 +31,9 @@
     "mocha": "~1.18.2",
     "should": "~3.2.0",
     "browserify": "~3.38.0",
-    "less": "~1.7.0"
+    "less": "~1.7.0",
+    "touch": "0.0.3",
+    "ncp": "^0.5.0"
   },
   "peerDependencies": {
     "browserify": "~3.38.0",

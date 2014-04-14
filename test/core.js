@@ -2,7 +2,9 @@ var should = require('should')
   , browserify = require('browserify')
   , splitlessify = require('../index')
   , fs = require('fs')
-  , rmdir = require('rimraf');
+  , rmdir = require('rimraf')
+  , touch = require('touch')
+  , ncp = require('ncp');
 
 describe('splitlessify', function() {
   before(function() {
@@ -118,9 +120,22 @@ describe('splitlessify', function() {
         filename: './test/tmp/out_watch.css',
         watch: true
       });
-      b.add('./test/shims/less/test.js');
-      b.bundle().pipe(fs.createWriteStream('/dev/null'));
-      done();
+
+      // prep the test by copying shim files, as we need to modify them
+      ncp('./test/shims/less', './test/tmp/less', { clobber: true }, function() {
+        b.add('./test/tmp/less/test.js');
+        b.on('splitlessify:update', function(bundle, filename) {
+          done();
+        });
+
+        b.bundle().pipe(fs.createWriteStream('/dev/null'));
+
+        // for some reason, chokidar needs a little time to register changes.
+        // if we don't set a long timeout (say, 1s), we get nondeterministic failures.
+        setTimeout(function() {
+          touch('./test/tmp/less/test2.less');
+        }, 1000);
+      });
     });
   });
 });

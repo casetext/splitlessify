@@ -74,8 +74,8 @@ module.exports = function(b, options) {
             }
             watcher = chokidar.watch(allImportFilenames);
             watcher.on('change', function(filename) {
-              b.emit('splitlessify:update', emit, filename);
               regenerate(lessData, emit);
+              b.emit('splitlessify:update', emit, filename);
             });
           }
 
