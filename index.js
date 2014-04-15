@@ -28,13 +28,10 @@ module.exports = function(b, options) {
     }
   };
 
-  function regenerate(lessData, emit) {
-    var allImportFilenames = []
-      , watcher;
+  var watcher;
 
-    if (options.filename) {
-      options.stream = fs.createWriteStream(options.filename);
-    }
+  function regenerate(lessData, emit) {
+    var allImportFilenames = [];
 
     if (lessData !== '') {
       new(less.Parser)(lessParserOptions).parse(lessData, function (err, tree) {
@@ -64,23 +61,26 @@ module.exports = function(b, options) {
             return path.resolve(fn);
           });
 
-          options.stream.on('finish', function() {
-            b.emit('splitlessify:end', emit, allImportFilenames);
-          });
-
           if (options.watch) {
-            if (watcher) {
-              watcher.close();
+            if (!watcher) {
+              watcher = chokidar.watch(allImportFilenames);
+              watcher.on('change', function(filename) {
+                regenerate(lessData, emit);
+                b.emit('splitlessify:update', emit, filename);
+              });
             }
-            watcher = chokidar.watch(allImportFilenames);
-            watcher.on('change', function(filename) {
-              regenerate(lessData, emit);
-              b.emit('splitlessify:update', emit, filename);
-            });
+            watcher.add(allImportFilenames);
           }
 
           try {
             var css = tree.toCSS(toCSSOptions);
+            if (options.filename) {
+              options.stream = fs.createWriteStream(options.filename);
+            }
+            options.stream.on('finish', function() {
+              b.emit('splitlessify:end', emit, allImportFilenames);
+            });
+
             options.stream.end(css);
             if (options.callback) {
               process.nextTick(options.callback.bind(this, allImportFilenames));
