@@ -61,6 +61,9 @@ Add tests for any new functionality.
 
 ## Release History
 
+### v0.4.1
+  - improved watching semantics
+
 ### v0.4.0
   - options.watch and browserify 'splitlessify:update' event added
 
