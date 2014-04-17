@@ -61,6 +61,9 @@ Add tests for any new functionality.
 
 ## Release History
 
+### v0.4.2
+  - Fixed up some cruft in package.json
+
 ### v0.4.1
   - improved watching semantics
 
