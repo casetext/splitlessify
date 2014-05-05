@@ -23,12 +23,12 @@ b.plugin('splitlessify', options);
 
 ### events
   - 'splitlessify:end' - triggered on the browserify object when the CSS is finished writing.
-  - 'splitlessify:watch' - triggered on the browserify object when one of the CSS files in the dependency graph changes (only if options.watch is set).
+  - 'splitlessify:update' - triggered on the browserify object when one of the CSS files in the dependency graph changes (only if options.watch is set). When you intercept this signal, call bundle() on your browserify object again.
 
 ### options
 
 #### watch
- - type [boolean] if set, splitlessify watches changes to the Less dependency graph and regenerates the CSS output when necessary 
+ - type [boolean] if set, splitlessify watches changes to the Less dependency graph and triggers 'splitlessify:update' events.
 
 #### stream
  - type [readable.Stream] a stream to which the output CSS will be written
@@ -60,6 +60,9 @@ npm test
 Add tests for any new functionality.
 
 ## Release History
+
+### v0.5.0
+  - Major refactor. Splitlessify NO LONGER REGENERATES CSS ON YOUR BEHALF; YOU HAVE TO REBUNDLE. This is much better behavior when working with Watchify. 
 
 ### v0.4.2
   - Fixed up some cruft in package.json

@@ -4,7 +4,7 @@ var fs = require('fs')
   , through = require('through')
   , chokidar = require('chokidar');
 
-module.exports = function(b, options) {
+var Splitlessify = function Splitlessify(b, options) {
   if (!options) {
     options = {};
   }
@@ -28,11 +28,16 @@ module.exports = function(b, options) {
     }
   };
 
-  var watcher;
+  // register the transform
+  b.transform(transformLess);
+
+  var watcher
+    , allImportFilenames
+    , topLevelDependencies = {}
+    , dependencyTree = {}
+    , requirements;
 
   function regenerate(lessData, emit) {
-    var allImportFilenames = [];
-
     if (lessData !== '') {
       new(less.Parser)(lessParserOptions).parse(lessData, function (err, tree) {
         if (err) {
@@ -57,19 +62,19 @@ module.exports = function(b, options) {
             }
           }
 
-          allImportFilenames = Object.keys(allImports).map(function(fn) {
-            return path.resolve(fn);
-          });
-
+          if (!allImportFilenames) {
+            allImportFilenames = Object.keys(allImports).map(function(fn) {
+              return path.resolve(fn);
+            });
+          }
           if (options.watch) {
-            if (!watcher) {
-              watcher = chokidar.watch(allImportFilenames);
-              watcher.on('change', function(filename) {
-                regenerate(lessData, emit);
-                b.emit('splitlessify:update', emit, filename);
-              });
+            if (watcher) {
+              watcher.close();
             }
-            watcher.add(allImportFilenames);
+            watcher = chokidar.watch(allImportFilenames);
+            watcher.on('change', function(filename) {
+              b.emit('splitlessify:update', emit, filename);
+            });
           }
 
           try {
@@ -99,21 +104,43 @@ module.exports = function(b, options) {
     }
   }
 
-  // register the transform
-  b.transform(transformLess);
+  b.on('file', function(file, id, parent) {
+    if (path.extname(file) === '.less') {
+      if (!dependencyTree[parent.filename]) {
+        dependencyTree[parent.filename] = {};
+      }
+      dependencyTree[parent.filename][file] = true;
+    }
+  });
+
+  b.on('update', function(ids) {
+    // when a file gets updated, clear its dependency graph, if it exists
+    // we'll reconstruct it on the next bundle event
+    ids.forEach(function(id) {
+      delete dependencyTree[id];
+    });
+  });
 
   // here's where the fun starts. handle bundle events
+
   b.on('bundle', function(bundle) {
-    var lessData = '';
-
-    bundle.on('transform', function(tr, file) {
-      if (tr._name && tr._name == 'transformLess') {
-        lessData += '@import "' + file + '";\n';
-      }
-    });
-
     bundle.on('end', function() {
+      // rebuild the top-level import list for less.js
+      requirements = {};
+      var lessData = '';
+      Object.keys(dependencyTree).forEach(function(topLevelDependency) {
+        Object.keys(dependencyTree[topLevelDependency]).forEach(function(lessFilename) {
+          requirements[lessFilename] = true;
+        });
+      });
+      Object.keys(requirements).forEach(function(lessFilename) {
+        lessData += '@import "' + lessFilename + '";\n';
+      });
       regenerate(lessData, bundle);
     });
   });
+};
+
+module.exports = function(b, options) {
+  return new Splitlessify(b, options);
 };
