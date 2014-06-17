@@ -61,6 +61,9 @@ Add tests for any new functionality.
 
 ## Release History
 
+### v0.6.0
+  - CSS files now get passed through using ```@import (inline)```. 
+
 ### v0.5.0
   - Major refactor. Splitlessify NO LONGER REGENERATES CSS ON YOUR BEHALF; YOU HAVE TO REBUNDLE. This is much better behavior when working with Watchify. 
 

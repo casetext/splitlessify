@@ -16,7 +16,7 @@ var Splitlessify = function Splitlessify(b, options) {
     , toCSSOptions = options.toCSS ? options.toCSS : {};
 
   var transformLess = function(file) {
-    if (path.extname(file) == '.less') {
+    if (path.extname(file) === '.less' || path.extname(file) === '.css') {
       var pipe = through(function() {}, function() {
         this.queue('// splitlessify: "' + path.basename(file) + '"');
         this.queue(null);
@@ -35,6 +35,7 @@ var Splitlessify = function Splitlessify(b, options) {
     , allImportFilenames
     , topLevelDependencies = {}
     , dependencyTree = {}
+    , cssRequirements = {}
     , requirements;
 
   function regenerate(lessData, emit) {
@@ -79,14 +80,16 @@ var Splitlessify = function Splitlessify(b, options) {
 
           try {
             var css = tree.toCSS(toCSSOptions);
-            if (options.filename) {
-              options.stream = fs.createWriteStream(options.filename);
-            }
-            options.stream.on('finish', function() {
+            if (options.stream) {
+             options.stream.end(css);
+             options.stream.on('finish', function() {
+               b.emit('splitlessify:end', emit, allImportFilenames);
+             });
+            } else if (options.filename) {
+              fs.writeFileSync(options.filename, css);
               b.emit('splitlessify:end', emit, allImportFilenames);
-            });
+            }
 
-            options.stream.end(css);
             if (options.callback) {
               process.nextTick(options.callback.bind(this, allImportFilenames));
             }
@@ -110,6 +113,8 @@ var Splitlessify = function Splitlessify(b, options) {
         dependencyTree[parent.filename] = {};
       }
       dependencyTree[parent.filename][file] = true;
+    } else if (path.extname(file) === '.css') {
+      cssRequirements[file] = true;
     }
   });
 
@@ -135,6 +140,9 @@ var Splitlessify = function Splitlessify(b, options) {
       });
       Object.keys(requirements).forEach(function(lessFilename) {
         lessData += '@import "' + lessFilename + '";\n';
+      });
+      Object.keys(cssRequirements).forEach(function(cssFilename) {
+        lessData += '@import (inline) "' + cssFilename + '";\n';
       });
       regenerate(lessData, bundle);
     });
